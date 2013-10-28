@@ -1,0 +1,74 @@
+body {
+	background-color: rgb(53,53,53);
+	color: #ffffff;
+}
+
+h1 {
+	text-align: center;
+}
+
+.game {
+	cursor: default;
+}
+
+.game:hover{
+   background-color: rgb(27,27,27);
+}
+
+.game-name {
+	cursor: pointer;
+}
+
+#game-list {
+/* 	min-height: 100px; */
+}
+
+ul.game-genres {
+	color: green;
+	display: inline;
+	margin: 0.5em;
+	padding: 0;
+}
+
+ul.game-genres li {
+	display: inline;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+ 
+ul.game-genres li:after {
+	content: ", ";
+	color: #aaa;
+}
+ 
+ul.game-genres li:last-child:after {
+	content: "";
+}
+
+.header {
+	border: 2px solid gray;
+	margin-bottom: 20px;
+}
+
+.left-column {
+	float:left;
+	border: 2px solid gray;
+	width: 49%;	
+}
+
+#spinner-holder {
+	margin-bottom: 100px;
+	margin-top: 50px;
+}
+
+.right-column {
+	float: right;
+	width: 49%;
+}
+
+#game-info-frame {
+	height:100%; 
+	width: 100%;
+	border: 2px solid gray;
+}
