@@ -47,6 +47,7 @@ public class SteamServiceImpl implements SteamService {
 			Game game = games.get(i);
 			List<String> genres = TheGamesDbDao.getGenresByGameName(game.getName());			
 			game.setGenres(genres != null ? genres : Arrays.asList("unknown"));
+			game.updateSearchField();
 			result.add(game);
 		}
 		return result;		
@@ -66,6 +67,7 @@ public class SteamServiceImpl implements SteamService {
 			Game game = games.get(i);
 			List<String> genres = TheGamesDbDao.getGenresByGameName(game.getName());			
 			game.setGenres(genres != null ? genres : Arrays.asList("unknown"));
+			game.updateSearchField();
 			result.add(game);
 		}
 		return result;
