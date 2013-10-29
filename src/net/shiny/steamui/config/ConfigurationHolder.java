@@ -9,7 +9,14 @@ public final class ConfigurationHolder {
 	private static final String CONFIGURATION_PROPERTIES = "configuration.properties";
 	private static final String API_PROPERTIES = "api.properties";
 
+	/**
+	 * Application configuration
+	 */
 	public static final Properties configuration;
+	/**
+	 * API keys for web services. Should not be under revision control.
+	 * Create your file with your own keys.
+	 */
 	public static final Properties api;
 	
 	private static final Logger LOG = Logger.getLogger(ConfigurationHolder.class.getName());
