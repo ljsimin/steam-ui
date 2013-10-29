@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
+import net.shiny.steamui.config.ConfigurationHolder;
 import net.shiny.steamui.dao.SteamDao;
 import net.shiny.steamui.dao.TheGamesDbDao;
 import net.shiny.steamui.dto.Game;
@@ -16,7 +17,7 @@ import net.shiny.steamui.service.SteamService;
  *
  */
 public class SteamServiceImpl implements SteamService {
-	private static final int FRAME_SIZE = 3;
+	private static final int FRAME_SIZE;
 	private static final Logger LOG = Logger.getLogger(SteamServiceImpl.class.getName());
 	
 	private static class Holder {
@@ -29,6 +30,10 @@ public class SteamServiceImpl implements SteamService {
     
     private SteamServiceImpl() {
     	//hiding default constructor
+    }
+    
+    static {
+    	FRAME_SIZE = Integer.parseInt(ConfigurationHolder.configuration.getProperty("steamService.frameSize"), 3);
     }
 
     /**

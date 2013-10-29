@@ -6,18 +6,26 @@ import java.util.logging.Logger;
 
 
 public final class ConfigurationHolder {
-	private static final String CONFIGURATION_PROPERTIES = "/configuration.properties";
+	private static final String CONFIGURATION_PROPERTIES = "configuration.properties";
+	private static final String API_PROPERTIES = "api.properties";
 
-	public static final Properties properties;
+	public static final Properties configuration;
+	public static final Properties api;
 	
 	private static final Logger LOG = Logger.getLogger(ConfigurationHolder.class.getName());
 	
 	static {
-		properties = new Properties();
+		configuration = new Properties();
+		api = new Properties();
 		try {
-			properties.load(ConfigurationHolder.class.getResourceAsStream(CONFIGURATION_PROPERTIES));
+			configuration.load(ConfigurationHolder.class.getResourceAsStream(CONFIGURATION_PROPERTIES));
 		} catch (IOException e) {
 			LOG.severe("Cannot load property file " + CONFIGURATION_PROPERTIES);
+		}
+		try {
+			api.load(ConfigurationHolder.class.getResourceAsStream(API_PROPERTIES));
+		} catch (IOException e) {
+			LOG.severe("Cannot load property file " + API_PROPERTIES);
 		}
 	}
 }
