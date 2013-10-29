@@ -31,25 +31,27 @@
 	</div>
 	
 	<script type="text/javascript">
+	var list = new Array();
+	var spinnerOpts = {
+			  lines: 13, // The number of lines to draw
+			  length: 15, // The length of each line
+			  width: 10, // The line thickness
+			  radius: 25, // The radius of the inner circle
+			  corners: 1, // Corner roundness (0..1)
+			  rotate: 0, // The rotation offset
+			  direction: 1, // 1: clockwise, -1: counterclockwise
+			  color: '#000', // #rgb or #rrggbb or array of colors
+			  speed: 1, // Rounds per second
+			  trail: 60, // Afterglow percentage
+			  shadow: false, // Whether to render a shadow
+			  hwaccel: false, // Whether to use hardware acceleration
+			  className: 'spinner', // The CSS class to assign to the spinner
+			  zIndex: 2e9, // The z-index (defaults to 2000000000)
+			  top: 'auto', // Top position relative to parent in px
+			  left: 'auto' // Left position relative to parent in px
+			};
+	
 	(function getGames() {
-		var spinnerOpts = {
-				  lines: 13, // The number of lines to draw
-				  length: 15, // The length of each line
-				  width: 10, // The line thickness
-				  radius: 25, // The radius of the inner circle
-				  corners: 1, // Corner roundness (0..1)
-				  rotate: 0, // The rotation offset
-				  direction: 1, // 1: clockwise, -1: counterclockwise
-				  color: '#000', // #rgb or #rrggbb or array of colors
-				  speed: 1, // Rounds per second
-				  trail: 60, // Afterglow percentage
-				  shadow: false, // Whether to render a shadow
-				  hwaccel: false, // Whether to use hardware acceleration
-				  className: 'spinner', // The CSS class to assign to the spinner
-				  zIndex: 2e9, // The z-index (defaults to 2000000000)
-				  top: 'auto', // Top position relative to parent in px
-				  left: 'auto' // Left position relative to parent in px
-				};
 		  var target = document.getElementById('spinner-holder');
 		  var spinner = new Spinner(spinnerOpts).spin(target);
 		  var url = "/steamui?id="+$.url().param("id")+"&offset="+$('.game').length;
@@ -58,43 +60,67 @@
 		  })
 		    .done(function(data ) {
 		    	spinner.stop();
-		    	console.log("data length " + data.length)
-		    	if (data.length > 0) {
-				      $.each(data, function(i, game ) {
-				        $("<li/>")
-				        	.attr("data-appid", game.appid)
-				        	.attr("id", "li-" + game.appid)
-				        	.addClass("game")
-				        	.appendTo("#game-list");
-				        var img = $('<img/>');
-				        img.attr('src', "http://media.steampowered.com/steamcommunity/public/images/apps/"+game.appid+"/"+game.img_icon_url+".jpg");
-				        img.appendTo('#li-'+game.appid);
-				        $('<span>')
-				        	.text(game.name)
-				        	.addClass("game-name")
-				        	.attr("data-appid", game.appid)
-				        	.appendTo('#li-'+game.appid);
-				        $('<ul>')
-				        	.addClass("game-genres")
-			        		.addClass("game-genres-"+game.appid)
-			        		.appendTo('#li-'+game.appid);
-				        $.each(game.genres, function(j, genre) {
-				        	$('<li>')
-			        			.text(genre)
-			        			.addClass("game-genre")
-			        			.appendTo(".game-genres-"+game.appid);
-				        });
-				        
-				      });
-					  $(".game-name").click(function () { 
-					      $("#game-info-frame").attr("src", "http://store.steampowered.com/app/"+$(this).data('appid'));
-					      console.log("http://store.steampowered.com/app/"+$(this).data('appid'));
-					      $("#game-info-frame").height($(".left-column").height());
-					  });
-					  getGames();
+		    	if (addItemsToList(data)) {
+		    		//if there is data returned call self recursively 
+					getGames();
+		    	} else {
+		    		//finished
+		    		console.log("Finshed loading, " + list.length + " items are in the list");
 		    	}
 		    });
 		})();
+	
+		function addItemsToList(data) {
+			console.log("data length " + data.length)
+	    	if (data.length > 0) {	    		
+			      $.each(data, function(i, game ) {
+			    	//adding game to the internal list
+			    	list.push(game);
+			    	
+			    	//rendering the game in the visual list
+			        render(game);
+			        
+			      });
+				  registerClickHandlers();
+				  return true;
+	    	} else {
+	    		return false;
+	    	}
+		}
+
+		function render(game) {
+			$("<li/>")
+        	.attr("data-appid", game.appid)
+        	.attr("id", "li-" + game.appid)
+        	.addClass("game")
+        	.appendTo("#game-list");
+	        var img = $('<img/>');
+	        img.attr('src', "http://media.steampowered.com/steamcommunity/public/images/apps/"+game.appid+"/"+game.img_icon_url+".jpg");
+	        img.appendTo('#li-'+game.appid);
+	        $('<span>')
+	        	.text(game.name)
+	        	.addClass("game-name")
+	        	.attr("data-appid", game.appid)
+	        	.appendTo('#li-'+game.appid);
+	        $('<ul>')
+	        	.addClass("game-genres")
+	    		.addClass("game-genres-"+game.appid)
+	    		.appendTo('#li-'+game.appid);
+	        $.each(game.genres, function(j, genre) {
+	        	$('<li>')
+	    			.text(genre)
+	    			.addClass("game-genre")
+	    			.appendTo(".game-genres-"+game.appid);
+        });
+		}
+		
+		function registerClickHandlers() {
+			$(".game-name").click(function () { 
+			      $("#game-info-frame").attr("src", "http://store.steampowered.com/app/"+$(this).data('appid'));
+			      console.log("http://store.steampowered.com/app/"+$(this).data('appid'));
+			      $("#game-info-frame").height($(".left-column").height());
+			  });
+		}
 	</script>
     
   </body>

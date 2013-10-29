@@ -33,7 +33,7 @@ public class SteamServiceImpl implements SteamService {
     }
     
     static {
-    	FRAME_SIZE = Integer.parseInt(ConfigurationHolder.configuration.getProperty("steamService.frameSize"), 3);
+    	FRAME_SIZE = Integer.parseInt(ConfigurationHolder.configuration.getProperty("steamService.frameSize"));
     }
 
     /**
