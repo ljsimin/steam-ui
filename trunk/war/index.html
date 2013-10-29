@@ -5,6 +5,7 @@
 <!-- "Quirks Mode". Replacing this declaration     -->
 <!-- with a "Standards Mode" doctype is supported, -->
 <!-- but may lead to some differences in layout.   -->
+<link type="text/css" rel="stylesheet" href="/css/reset.css" />
 <link type="text/css" rel="stylesheet" href="/css/main.css" />
 
 <html>
@@ -16,6 +17,7 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 <script src="js/purl.js"></script>
 <script src="js/spin.min.js"></script>
+<script src="js/underscore-min.js"></script>
 
   <body>
     <div class="header">
@@ -23,6 +25,7 @@
 	</div>
 	
 	<div class="left-column">
+		<input name="filterInput" id="filterInput">
 		<ul id="game-list"></ul>
 		<div id="spinner-holder"></div>
 	</div>
@@ -30,7 +33,7 @@
 		<iframe id="game-info-frame"></iframe>
 	</div>
 	
-	<script type="text/javascript">
+	<script type="text/javascript">	
 	var list = new Array();
 	var spinnerOpts = {
 			  lines: 13, // The number of lines to draw
@@ -50,7 +53,7 @@
 			  top: 'auto', // Top position relative to parent in px
 			  left: 'auto' // Left position relative to parent in px
 			};
-	
+	registerSearchHandler();
 	(function getGames() {
 		  var target = document.getElementById('spinner-holder');
 		  var spinner = new Spinner(spinnerOpts).spin(target);
@@ -81,7 +84,7 @@
 			        render(game);
 			        
 			      });
-				  registerClickHandlers();
+				  registerClickHandlers();				  
 				  return true;
 	    	} else {
 	    		return false;
@@ -114,12 +117,31 @@
         });
 		}
 		
+		function filter(s) {
+			var result = _(list).filter(function (x) { 
+				return ~x.searchField.toLowerCase().indexOf(s.toLowerCase()); 
+			});
+    		$("#game-list").empty();
+    		$.each(result, function(i, game ) {
+		    	//rendering the game in the visual list
+		        render(game);
+	        });
+		}
+		
 		function registerClickHandlers() {
 			$(".game-name").click(function () { 
 			      $("#game-info-frame").attr("src", "http://store.steampowered.com/app/"+$(this).data('appid'));
 			      console.log("http://store.steampowered.com/app/"+$(this).data('appid'));
 			      $("#game-info-frame").height($(".left-column").height());
 			  });
+		}
+		
+		function registerSearchHandler() {
+			$('#filterInput').on('keypress', function(e) {
+				if (e.keyCode == 13) {
+			    	filter($(this).val())
+				}
+			});
 		}
 	</script>
     

@@ -12,6 +12,7 @@ public final class Game {
 	@SerializedName("img_icon_url") 
 	private String imgIconUrl;
 	private List<String> genres;
+	private String searchField;
 	
 	public String getAppid() {
 		return appid;
@@ -30,5 +31,15 @@ public final class Game {
 	}
 	public void setGenres(List<String> genres) {
 		this.genres = genres;
+	}
+	public String getSearchField() {
+		return searchField;
+	}
+	public void setSearchField(String searchField) {
+		this.searchField = searchField;
+	}
+	
+	public void updateSearchField() {		
+		this.searchField = new StringBuilder().append(name + " ").append(genres != null ? genres.toString() : "").toString(); 
 	}
 }
