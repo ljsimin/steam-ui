@@ -21,7 +21,7 @@ public class SteamDao {
 	private static Map<String, List<Game>> cachedGames = new HashMap<String, List<Game>>();
 
 	static {
-		STEAM_API_KEY = ConfigurationHolder.properties.getProperty("steam.api.key");
+		STEAM_API_KEY = ConfigurationHolder.api.getProperty("steam.api.key");
 		STEAM_API_URL = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key="+STEAM_API_KEY+"&format=json&&include_appinfo=1";
 	}
 	
