@@ -25,7 +25,7 @@
 	</div>
 	
 	<div class="left-column">
-		<input name="filterInput" id="filterInput">
+		<input name="filter-input" id="filter-input" type="text">
 		<ul id="game-list"></ul>
 		<div id="spinner-holder"></div>
 	</div>
@@ -53,7 +53,6 @@
 			  top: 'auto', // Top position relative to parent in px
 			  left: 'auto' // Left position relative to parent in px
 			};
-	registerSearchHandler();
 	(function getGames() {
 		  var target = document.getElementById('spinner-holder');
 		  var spinner = new Spinner(spinnerOpts).spin(target);
@@ -93,13 +92,23 @@
 
 		function render(game) {
 			$("<li/>")
-        	.attr("data-appid", game.appid)
-        	.attr("id", "li-" + game.appid)
-        	.addClass("game")
-        	.appendTo("#game-list");
-	        var img = $('<img/>');
-	        img.attr('src', "http://media.steampowered.com/steamcommunity/public/images/apps/"+game.appid+"/"+game.img_icon_url+".jpg");
-	        img.appendTo('#li-'+game.appid);
+        		.attr("data-appid", game.appid)
+        		.attr("id", "li-" + game.appid)
+        		.addClass("game")
+        		.appendTo("#game-list");
+			$('<a>')
+				.attr('href', "steam://run/"+game.appid)
+				.attr("id", "run-" + game.appid)
+				.appendTo('#li-'+game.appid);
+	        $('<img/>')
+	        	.addClass('run-game')
+	        	.attr("data-appid", game.appid)
+	        	.attr('src', "/image/play-icon.png")
+	        	.appendTo('#run-'+game.appid);
+	        $('<img/>')
+	        	.addClass('game-thumbnail')
+	        	.attr('src', "http://media.steampowered.com/steamcommunity/public/images/apps/"+game.appid+"/"+game.img_icon_url+".jpg")
+	        	.appendTo('#li-'+game.appid);
 	        $('<span>')
 	        	.text(game.name)
 	        	.addClass("game-name")
@@ -114,7 +123,7 @@
 	    			.text(genre)
 	    			.addClass("game-genre")
 	    			.appendTo(".game-genres-"+game.appid);
-        });
+        	});
 		}
 		
 		function filter(s) {
@@ -125,6 +134,7 @@
     		$.each(result, function(i, game ) {
 		    	//rendering the game in the visual list
 		        render(game);
+		        registerClickHandlers();
 	        });
 		}
 		
@@ -137,12 +147,22 @@
 		}
 		
 		function registerSearchHandler() {
-			$('#filterInput').on('keypress', function(e) {
+			$('#filter-input').on('keypress', function(e) {
+				//enter
 				if (e.keyCode == 13) {
-			    	filter($(this).val())
+			    	filter($(this).val());
+			    //escape
+				} else if (e.keyCode == 27) {
+					$('#filter-input').val('');
+			    	//filter($(this).val());
+			    	console.log($('#filter-input'));
 				}
 			});
 		}
+		
+		$(document).ready(function() {
+			registerSearchHandler();
+		});
 	</script>
     
   </body>
