@@ -10,6 +10,12 @@ h1 {
 /* 	margin: 0; */
 }
 
+h2 {
+	text-align: center;
+	font-size: 1em;
+	font-weight: bold;
+}
+
 .game {
 	cursor: default;
 }
@@ -19,7 +25,8 @@ h1 {
 }
 
 .game-name {
-	cursor: pointer;
+/* 	cursor: pointer; */
+	font-size: 12px;
 }
 
 #game-list {
@@ -35,6 +42,7 @@ ul.game-genres {
 	margin: 0.5em;
 	padding: 0;
 	float: right;
+	font-size: 10px;
 }
 
 ul.game-genres li {
@@ -69,7 +77,7 @@ ul li, li * {
 }
 
 #filter-input {
-	width: 100%;
+	width: 88%;
 }
 
 .left-column {
@@ -86,7 +94,11 @@ ul li, li * {
 	width: 50%;
 	height: 85%;
 	border: 2px solid gray;
-	border-left: none;
+/* 	border-left: none; */
+}
+
+.right-column * {
+	margin: 1px;
 }
 
 #spinner-holder {
@@ -97,4 +109,10 @@ ul li, li * {
 #game-info-frame {
 	height: 100%; 
 	width: 100%;
+	overflow-y: auto;
+}
+
+.detail-image {
+	height: 128px;
+	float: left;
 }

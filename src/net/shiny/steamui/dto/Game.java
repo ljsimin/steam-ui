@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
-public final class Game {
+public final class Game implements Comparable<Game> {
 	private String appid;
 	private String name;
 	@SerializedName("playtime_forever") 
@@ -41,5 +41,15 @@ public final class Game {
 	
 	public void updateSearchField() {		
 		this.searchField = new StringBuilder().append(name + " ").append(genres != null ? genres.toString() : "").toString(); 
+	}
+	@Override
+	public int compareTo(Game o) {
+		if (o == null) {
+			throw new NullPointerException();
+		}
+		if (o instanceof Game) {
+			return o.getName().compareTo(this.getName()) * -1;
+		}
+		return 0;
 	}
 }

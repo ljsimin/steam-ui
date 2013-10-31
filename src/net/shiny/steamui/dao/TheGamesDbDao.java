@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import net.shiny.steamui.dto.GameDetails;
+import net.shiny.steamui.strategy.GameStrategy;
+import net.shiny.steamui.strategy.impl.ExtractGameDetailsStrategy;
+import net.shiny.steamui.strategy.impl.ExtractGenresStrategy;
 import net.shiny.steamui.util.HttpUtil;
 import net.shiny.steamui.util.XmlUtil;
 
@@ -21,7 +25,7 @@ import com.google.appengine.api.datastore.Entity;
 public final class TheGamesDbDao {
 	private static final Logger LOG = Logger.getLogger(TheGamesDbDao.class.getName());
 	private static final String DB_URL = "http://thegamesdb.net/api/GetGame.php?name=";
-	private static final String GENRES = "Genres";
+	private static final String ROOT_NODE = "Games";
 	private static Map<String, List<String>> cachedGenres = new HashMap<String, List<String>>();
 	
 	/**
@@ -55,11 +59,20 @@ public final class TheGamesDbDao {
 		}
 		return cachedGenres.get(gameName);
 	}
+	
+	public static GameDetails getGameDetails(String gameName) {
+		LOG.info("Fetching game details from the internet for game " + gameName);
+		String xml = HttpUtil.getGetResponse(buildUrl(gameName));
+		GameDetails gameDetails = (GameDetails) XmlUtil.extractElements(xml, new ExtractGameDetailsStrategy());
+		gameDetails.setGenres(getGenresByGameName(gameName));
+		return gameDetails;
+	}
 
 	private static List<String> getGenresFromInternet(String gameName) {
 		LOG.info("Fetching genres from the internet: " + gameName);
 		String xml = HttpUtil.getGetResponse(buildUrl(gameName));
-		List<String> genres = XmlUtil.getTextChildNodes(xml, GENRES);
+		GameStrategy strategy =  new ExtractGenresStrategy();
+		List<String> genres = (List<String>) XmlUtil.extractElements(xml, strategy);
 		return genres;
 	}
 
@@ -76,4 +89,5 @@ public final class TheGamesDbDao {
 		}
 		return "";
 	}
+
 }

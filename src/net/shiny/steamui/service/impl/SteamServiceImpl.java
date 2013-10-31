@@ -2,13 +2,16 @@ package net.shiny.steamui.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
 import net.shiny.steamui.config.ConfigurationHolder;
+import net.shiny.steamui.dao.LocalCoopDao;
 import net.shiny.steamui.dao.SteamDao;
 import net.shiny.steamui.dao.TheGamesDbDao;
 import net.shiny.steamui.dto.Game;
+import net.shiny.steamui.dto.GameDetails;
 import net.shiny.steamui.service.SteamService;
 
 /**
@@ -17,6 +20,7 @@ import net.shiny.steamui.service.SteamService;
  *
  */
 public class SteamServiceImpl implements SteamService {
+	private static final String LOCAL_CO_OP = "Local co-op";
 	private static final int FRAME_SIZE;
 	private static final Logger LOG = Logger.getLogger(SteamServiceImpl.class.getName());
 	
@@ -45,9 +49,7 @@ public class SteamServiceImpl implements SteamService {
 		List<Game> result = new ArrayList<Game>();
 		for (int i = 0; i< games.size(); i++) {
 			Game game = games.get(i);
-			List<String> genres = TheGamesDbDao.getGenresByGameName(game.getName());			
-			game.setGenres(genres != null ? genres : Arrays.asList("unknown"));
-			game.updateSearchField();
+			enrich(game);
 			result.add(game);
 		}
 		return result;		
@@ -58,20 +60,44 @@ public class SteamServiceImpl implements SteamService {
 	 */
 	@Override
 	public List<Game> getGames(String steamId, Integer offset) {
-		List<Game> games = SteamDao.getAllGamesBySteamId(steamId);	
+		try {
+			Thread.sleep(0);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		List<Game> games = SteamDao.getAllGamesBySteamId(steamId);
+		Collections.sort(games);
 		List<Game> result = new ArrayList<Game>();
 		int counter = FRAME_SIZE;
 		for (int i = offset; i< games.size(); i++) {
 			if (--counter < 0) 
 				break;
 			Game game = games.get(i);
-			List<String> genres = TheGamesDbDao.getGenresByGameName(game.getName());			
-			game.setGenres(genres != null ? genres : Arrays.asList("unknown"));
-			game.updateSearchField();
+			enrich(game);
 			result.add(game);
 		}
 		return result;
 	}
+
+	@Override
+	public GameDetails getGameDetails(String gameName) {
+		return TheGamesDbDao.getGameDetails(gameName);
+	}
 	
+	/**
+	 * Adds the genres to the game
+	 * @param game
+	 */
+	private void enrich(Game game) {
+		List<String> genres = TheGamesDbDao.getGenresByGameName(game.getName());
+		if (LocalCoopDao.supportsLocalCoop(game.getName())) {				
+			if (genres != null && !genres.contains(LOCAL_CO_OP)) {
+				genres.add(LOCAL_CO_OP);
+			}
+		}
+		game.setGenres(genres != null ? genres : Arrays.asList("unknown"));
+		game.updateSearchField();
+	}
 	
 }
