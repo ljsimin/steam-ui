@@ -22,23 +22,26 @@
   <body>
     <div class="header">
     	<h1 >Steam UI beta</h1>
+    	<span id="spinner-header"></span>
 	</div>
 	
 	<div class="left-column">
+		Search: 
 		<input name="filter-input" id="filter-input" type="text">
 		<ul id="game-list"></ul>
 		<div id="spinner-holder"></div>
 	</div>
 	<div class="right-column">
-		<iframe id="game-info-frame"></iframe>
+<!-- 		<iframe id="game-info-frame"></iframe> -->
+		<div id="game-info-frame"></div>
 	</div>
 	
 	<script type="text/javascript">	
 	var list = new Array();
 	var spinnerOpts = {
 			  lines: 13, // The number of lines to draw
-			  length: 15, // The length of each line
-			  width: 10, // The line thickness
+			  length: 5, // The length of each line
+			  width: 5, // The line thickness
 			  radius: 25, // The radius of the inner circle
 			  corners: 1, // Corner roundness (0..1)
 			  rotate: 0, // The rotation offset
@@ -50,18 +53,18 @@
 			  hwaccel: false, // Whether to use hardware acceleration
 			  className: 'spinner', // The CSS class to assign to the spinner
 			  zIndex: 2e9, // The z-index (defaults to 2000000000)
-			  top: 'auto', // Top position relative to parent in px
-			  left: 'auto' // Left position relative to parent in px
+			  top: '100', // Top position relative to parent in px
+			  left: '100' // Left position relative to parent in px
 			};
 	(function getGames() {
-		  var target = document.getElementById('spinner-holder');
-		  var spinner = new Spinner(spinnerOpts).spin(target);
+// 		  $('.left-column').after(new Spinner(spinnerOpts).spin().el);
 		  var url = "/steamui?id="+$.url().param("id")+"&offset="+$('.game').length;
 		  console.log(url);
 		  $.getJSON( url, {
 		  })
 		    .done(function(data ) {
-		    	spinner.stop();
+// 		    	spinner.stop();
+				$('#spinner-holder').empty();
 		    	if (addItemsToList(data)) {
 		    		//if there is data returned call self recursively 
 					getGames();
@@ -93,6 +96,7 @@
 		function render(game) {
 			$("<li/>")
         		.attr("data-appid", game.appid)
+        		.attr("data-game-name", game.name)
         		.attr("id", "li-" + game.appid)
         		.addClass("game")
         		.appendTo("#game-list");
@@ -139,10 +143,95 @@
 		}
 		
 		function registerClickHandlers() {
-			$(".game-name").click(function () { 
-			      $("#game-info-frame").attr("src", "http://store.steampowered.com/app/"+$(this).data('appid'));
-			      console.log("http://store.steampowered.com/app/"+$(this).data('appid'));
-			      $("#game-info-frame").height($(".left-column").height());
+			$(".game").unbind().click(function () { 
+// 			      $("#game-info-frame").attr("src", "http://store.steampowered.com/app/"+$(this).data('appid'));
+// 			      console.log("http://store.steampowered.com/app/"+$(this).data('appid'));
+// 			      $("#game-info-frame").height($(".left-column").height());
+				var gameName = $(this).data('game-name');
+				var appid = $(this).data('appid');
+				console.log(gameName);
+				$('<span>')
+					.attr('id', 'detailSpinnerHolder')
+					.appendTo('#game-info-frame');
+// 				var detailSpinnerTarget = $('#detailSpinnerHolder');
+// 				$('#spinner-header').after(new Spinner(spinnerOpts).spin().el);
+				$.getJSON( '/game?name='+gameName, {
+				  })
+				    .done(function(data) {
+				    	$('#spinner-header').empty();
+				    	$('#game-info-frame').empty();
+				    	$('<h2>')
+			        		.text(data.gameTitle)
+			        		.addClass("detail-title")
+			        		.appendTo('#game-info-frame');
+				    	 $('<img/>')
+				        	.addClass('detail-image')
+				        	.attr('src', data.imageUrl)
+				        	.appendTo('#game-info-frame');
+				    	 $('<span>')
+				        	.text(data.overview)
+				        	.addClass("detail-overview")
+				        	.appendTo('#game-info-frame');
+				    	 $('<div>')
+				        	.appendTo('#game-info-frame');
+				    	 $('<span>')
+				        	.text("Rating: ")
+				        	.addClass("detail-rating-label")
+				        	.appendTo('#game-info-frame');
+				    	 $('<span>')
+				        	.text(data.rating)
+				        	.addClass("detail-rating-value")
+				        	.appendTo('#game-info-frame');
+				    	 $('<div>')
+				        	.appendTo('#game-info-frame');
+				    	 $('<span>')
+				        	.text("Developer: ")
+				        	.addClass("detail-developer-label")
+				        	.appendTo('#game-info-frame');
+				    	 $('<span>')
+				        	.text(data.developer)
+				        	.addClass("detail-develoepr-value")
+				        	.appendTo('#game-info-frame');
+				    	 $('<div>')
+				        	.appendTo('#game-info-frame');
+				    	 $('<span>')
+				        	.text("Publisher: ")
+				        	.addClass("detail-publisher-label")
+				        	.appendTo('#game-info-frame');
+				    	 $('<span>')
+				        	.text(data.publisher)
+				        	.addClass("detail-publisher-value")
+				        	.appendTo('#game-info-frame');
+				    	 $('<div>')
+				        	.appendTo('#game-info-frame');
+				    	 $('<span>')
+				        	.text("Genres: ")
+				        	.addClass("detail-genres-label")
+				        	.appendTo('#game-info-frame');
+				    	 $.each(data.genres, function(j, genre) {
+					        	$('<li>')
+					    			.text(genre)
+					    			.addClass("detail-genre")
+					    			.appendTo('#game-info-frame');
+				        	});
+				    	 $('<div>')
+				        	.appendTo('#game-info-frame');
+				    	 $('<span>')
+				        	.text("Links: ")
+				        	.addClass("detail-links-label")
+				        	.appendTo('#game-info-frame');
+				    	 $('<a>')
+				        	.attr('href', "http://store.steampowered.com/app/"+appid)
+				        	.text("Steam store")
+				        	.addClass("detail-links-value")
+				        	.appendTo('#game-info-frame');
+				    	 $('<a>')
+				        	.attr('href', "http://en.wikipedia.org/wiki/"+gameName+"_(video_game)")
+				        	.text("Wikipedia")
+				        	.addClass("detail-links-value")
+				        	.appendTo('#game-info-frame');
+				    	 
+			    });
 			  });
 		}
 		
