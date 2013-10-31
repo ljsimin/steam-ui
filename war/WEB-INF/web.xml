@@ -7,6 +7,10 @@
 		<servlet-name>GameDetailEndpoint</servlet-name>
 		<servlet-class>net.shiny.steamui.endpoint.GameDetailEndpoint</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>PlayerDetailEndpoint</servlet-name>
+		<servlet-class>net.shiny.steamui.endpoint.PlayerDetailEndpoint</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>SteamUiEndpoint</servlet-name>
 		<url-pattern>/steamui</url-pattern>
@@ -14,6 +18,10 @@
 	<servlet-mapping>
 		<servlet-name>GameDetailEndpoint</servlet-name>
 		<url-pattern>/game</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>PlayerDetailEndpoint</servlet-name>
+		<url-pattern>/player</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
