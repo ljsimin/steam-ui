@@ -21,7 +21,7 @@
 
   <body>
     <div class="header">
-    	<h1 >Steam UI beta</h1>
+    	<h1 ><span id="player-name"></span> Steam UI beta 4</h1>
     	<span id="spinner-header"></span>
 	</div>
 	
@@ -58,12 +58,11 @@
 			};
 	(function getGames() {
 // 		  $('.left-column').after(new Spinner(spinnerOpts).spin().el);
-		  var url = "/steamui?id="+$.url().param("id")+"&offset="+$('.game').length;
-		  console.log(url);
-		  $.getJSON( url, {
+		  var urlGames = "/steamui?id="+$.url().param("id")+"&offset="+$('.game').length;
+		  console.log(urlGames);
+		  $.getJSON( urlGames, {
 		  })
 		    .done(function(data ) {
-// 		    	spinner.stop();
 				$('#spinner-holder').empty();
 		    	if (addItemsToList(data)) {
 		    		//if there is data returned call self recursively 
@@ -72,6 +71,13 @@
 		    		//finished
 		    		console.log("Finshed loading, " + list.length + " items are in the list");
 		    	}
+		    });
+		  var urlPlayer = "/player?id="+$.url().param("id");
+		  console.log(urlPlayer);
+		  $.getJSON( urlPlayer, {
+		  })
+		    .done(function(data ) {
+		    	$('#player-name').text(data + " - ");
 		    });
 		})();
 	

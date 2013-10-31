@@ -99,5 +99,10 @@ public class SteamServiceImpl implements SteamService {
 		game.setGenres(genres != null ? genres : Arrays.asList("unknown"));
 		game.updateSearchField();
 	}
+
+	@Override
+	public String getPlayerName(String steamId) {
+		return SteamDao.getPlayerName(steamId);
+	}
 	
 }

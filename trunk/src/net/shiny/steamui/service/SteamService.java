@@ -13,4 +13,6 @@ public interface SteamService {
 	public List<Game> getGames(String steamId, Integer offset);
 
 	public GameDetails getGameDetails(String gameName);
+	
+	public String getPlayerName(String steamId);
 }
