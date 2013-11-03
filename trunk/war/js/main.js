@@ -8,7 +8,7 @@ steamui.getGames = function() {
 	  $.getJSON(urlGames, {
 	  })
 	    .done(function(data ) {
-	    	if (addItemsToList(data)) {
+	    	if (steamui.addItemsToList(data)) {
 	    		//if there is data returned call self recursively 
 				steamui.getGames();
 	    	} else {
@@ -124,7 +124,7 @@ steamui.renderDetailsView = function(data) {
 }
 
 steamui.filter = function(s) {
-	var result = _(list).filter(function (x) { 
+	var result = _(steamui.gameList).filter(function (x) { 
 		return ~x.searchField.toLowerCase().indexOf(s.toLowerCase()); 
 	});
 	$("#game-list").empty();
@@ -172,7 +172,7 @@ steamui.render = function(game) {
 	});
 }
 
-steamui,addItemsToList = function(data) {
+steamui.addItemsToList = function(data) {
 	console.log("data length " + data.length)
 	if (data.length > 0) {	    		
 	      $.each(data, function(i, game ) {
