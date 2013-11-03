@@ -131,7 +131,7 @@ steamui.renderDetailsView = function(data, appid) {
     	.addClass("detail-links-value")
     	.appendTo('#game-info-frame');
 	 $('<a>')
-    	.attr('href', "http://en.wikipedia.org/wiki/"+data.gameTitle+"_(video_game)")
+    	.attr('href', "http://en.wikipedia.org/wiki/Special:Search/"+data.gameTitle)
     	.text("Wikipedia")
     	.addClass("detail-links-value")
     	.appendTo('#game-info-frame');
