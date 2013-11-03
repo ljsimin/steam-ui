@@ -1,39 +1,43 @@
 var steamui = {}
 
 steamui.gameList = new Array();
+steamui.spinnerCounter = 0;
 
 steamui.getGames = function() {
-	  var urlGames = "/steamui?id="+$.url().param("id")+"&offset="+$('.game').length;
-	  console.log(urlGames);
-	  $.getJSON(urlGames, {
-	  })
-	    .done(function(data ) {
-	    	if (steamui.addItemsToList(data)) {
-	    		//if there is data returned call self recursively 
+	steamui.startSpinner();
+	var urlGames = "/steamui?id=" + $.url().param("id") + "&offset="+ $('.game').length;
+	console.log(urlGames);
+	$.getJSON(urlGames, {}).done(
+		function(data) {
+			steamui.spinnerCounter--;
+			if (steamui.addItemsToList(data)) {
+				// if there is data returned call self recursively
 				steamui.getGames();
-	    	} else {
-	    		//finished
-	    		console.log("Finshed loading, " + steamui.gameList.length + " items are in the list");
-	    	}
-	    });
-	  var urlPlayer = "/player?id="+$.url().param("id");
-	  console.log(urlPlayer);
-	  $.getJSON(urlPlayer, {
-	  })
-	    .done(function(data ) {
-	    	$('#player-name').text(data + " - ");
-	    });
-	}
+			} else {
+				// finished
+				steamui.stopSpinner();
+				console.log("Finshed loading, " + steamui.gameList.length
+						+ " items are in the list");
+			}
+		});
+	var urlPlayer = "/player?id=" + $.url().param("id");
+	console.log(urlPlayer);
+	$.getJSON(urlPlayer, {}).done(function(data) {
+		$('#player-name').text(data + " - ");
+	});
+}
 
 steamui.registerClickHandlers = function() {
 	$(".game").unbind().click(function () { 
+		steamui.startSpinner();
 		var gameName = $(this).data('game-name');
 		var appid = $(this).data('appid');
 		console.log(gameName);
 		$.getJSON( '/game?name='+gameName, {
 		  })
 		    .done(function(data) {
-		    	steamui.renderDetailsView(data);
+		    	steamui.renderDetailsView(data, appid);
+		    	steamui.stopSpinner();
 		    	 
 	    });
 	  });
@@ -48,7 +52,7 @@ steamui.registerSearchHandler = function() {
 	});
 }
 
-steamui.renderDetailsView = function(data) {
+steamui.renderDetailsView = function(data, appid) {
 	$('#spinner-header').empty();
 	$('#game-info-frame').empty();
 	$('<h2>')
@@ -117,7 +121,7 @@ steamui.renderDetailsView = function(data) {
     	.addClass("detail-links-value")
     	.appendTo('#game-info-frame');
 	 $('<a>')
-    	.attr('href', "http://en.wikipedia.org/wiki/"+gameName+"_(video_game)")
+    	.attr('href', "http://en.wikipedia.org/wiki/"+data.gameTitle+"_(video_game)")
     	.text("Wikipedia")
     	.addClass("detail-links-value")
     	.appendTo('#game-info-frame');
@@ -187,5 +191,25 @@ steamui.addItemsToList = function(data) {
 		  return true;
 	} else {
 		return false;
+	}
+}
+
+/**
+ * Starts the spinner and increases the job count
+ */
+steamui.startSpinner = function() {
+	steamui.spinnerCounter++;
+	$("#spinner").show('fast');
+}
+
+/**
+ * Hides the spinner if there are no pending jobs
+ */
+steamui.stopSpinner = function() {
+	if (steamui.spinnerCounter > 0) {
+		steamui.spinnerCounter--;
+	}
+	if (steamui.spinnerCounter < 1) {
+		$("#spinner").hide('slow');
 	}
 }

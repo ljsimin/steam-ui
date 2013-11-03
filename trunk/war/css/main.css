@@ -73,7 +73,14 @@ ul li, li * {
 	border: 2px solid gray;
 	margin-bottom: 10px;
 	width: 99%;
-/* 	height: 10%; */
+	min-height: 40px;
+	
+}
+
+#spinner {
+	float: left;
+	margin: 5px;
+	display: none;
 }
 
 #filter-input {
@@ -99,11 +106,6 @@ ul li, li * {
 
 .right-column * {
 	margin: 1px;
-}
-
-#spinner-holder {
-	margin-bottom: 100px;
-	margin-top: 50px;
 }
 
 #game-info-frame {
