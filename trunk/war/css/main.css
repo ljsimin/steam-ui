@@ -20,8 +20,12 @@ h2 {
 	cursor: default;
 }
 
+.game.clicked {
+	background-color: rgb(27,27,27);
+}
+
 .game:hover{
-   background-color: rgb(27,27,27);
+	background-color: rgb(27,27,27);
 }
 
 .game-name {
