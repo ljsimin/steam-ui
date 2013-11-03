@@ -60,11 +60,18 @@ public final class TheGamesDbDao {
 		return cachedGenres.get(gameName);
 	}
 	
+	/**
+	 * Gets the game datails for the game with a given name
+	 * @param gameName
+	 * @return
+	 */
 	public static GameDetails getGameDetails(String gameName) {
 		LOG.info("Fetching game details from the internet for game " + gameName);
 		String xml = HttpUtil.getGetResponse(buildUrl(gameName));
 		GameDetails gameDetails = (GameDetails) XmlUtil.extractElements(xml, new ExtractGameDetailsStrategy());
-		gameDetails.setGenres(getGenresByGameName(gameName));
+		if (gameDetails != null) {
+			gameDetails.setGenres(getGenresByGameName(gameName));
+		}
 		return gameDetails;
 	}
 

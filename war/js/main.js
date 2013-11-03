@@ -29,6 +29,8 @@ steamui.getGames = function() {
 
 steamui.registerClickHandlers = function() {
 	$(".game").unbind().click(function () { 
+		$(".game").removeClass('clicked');
+		$(this).addClass('clicked');
 		steamui.startSpinner();
 		var gameName = $(this).data('game-name');
 		var appid = $(this).data('appid');
@@ -36,10 +38,17 @@ steamui.registerClickHandlers = function() {
 		$.getJSON( '/game?name='+gameName, {
 		  })
 		    .done(function(data) {
+		    	if (data == null) {
+		    		steamui.renderDetailsViewErrorMessage('Error');
+		    		return;
+		    	}
 		    	steamui.renderDetailsView(data, appid);
 		    	steamui.stopSpinner();
 		    	 
-	    });
+		    })
+			.fail(function() {
+				steamui.renderDetailsViewErrorMessage('Error');			
+			});
 	  });
 }
 
@@ -53,7 +62,6 @@ steamui.registerSearchHandler = function() {
 }
 
 steamui.renderDetailsView = function(data, appid) {
-	$('#spinner-header').empty();
 	$('#game-info-frame').empty();
 	$('<h2>')
 		.text(data.gameTitle)
@@ -103,12 +111,14 @@ steamui.renderDetailsView = function(data, appid) {
     	.text("Genres: ")
     	.addClass("detail-genres-label")
     	.appendTo('#game-info-frame');
-	 $.each(data.genres, function(j, genre) {
-        	$('<li>')
-    			.text(genre)
-    			.addClass("detail-genre")
-    			.appendTo('#game-info-frame');
-    	});
+	 if (data.genres != null) {
+		 $.each(data.genres, function(j, genre) {
+	        	$('<li>')
+	    			.text(genre)
+	    			.addClass("detail-genre")
+	    			.appendTo('#game-info-frame');
+	    	});
+	 }
 	 $('<div>')
     	.appendTo('#game-info-frame');
 	 $('<span>')
@@ -125,6 +135,14 @@ steamui.renderDetailsView = function(data, appid) {
     	.text("Wikipedia")
     	.addClass("detail-links-value")
     	.appendTo('#game-info-frame');
+}
+
+steamui.renderDetailsViewErrorMessage = function(message) {
+	steamui.stopSpinner();
+	$('#game-info-frame').empty();
+	$('<span>')
+		.text(message)
+		.appendTo('#game-info-frame');		
 }
 
 steamui.filter = function(s) {
