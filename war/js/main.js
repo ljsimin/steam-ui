@@ -59,6 +59,9 @@ steamui.registerSearchHandler = function() {
 	    	steamui.filter($(this).val());
 		} 
 	});
+	$('#filter-input').on('keyup change', function(e) {
+		steamui.filter($(this).val());
+	});
 }
 
 steamui.renderDetailsView = function(data, appid) {
@@ -145,9 +148,9 @@ steamui.renderDetailsViewErrorMessage = function(message) {
 		.appendTo('#game-info-frame');		
 }
 
-steamui.filter = function(s) {
+steamui.filter = _.throttle(function(s) {
 	var result = _(steamui.gameList).filter(function (x) { 
-		return ~x.searchField.toLowerCase().indexOf(s.toLowerCase()); 
+		return ~x.searchField.toLowerCase().indexOf(s.trim().toLowerCase()); 
 	});
 	$("#game-list").empty();
 	$.each(result, function(i, game ) {
@@ -155,7 +158,7 @@ steamui.filter = function(s) {
         steamui.render(game);
         steamui.registerClickHandlers();
     });
-}
+}, 500);
 
 steamui.render = function(game) {
 	$("<li/>")
