@@ -15,4 +15,6 @@ public interface SteamService {
 	public GameDetails getGameDetails(String gameName);
 	
 	public String getPlayerName(String steamId);
+
+	List<String> getGenresForGameName(String gameName);
 }
