@@ -32,30 +32,29 @@ public final class TheGamesDbDao {
 	 * Returns the list of strings representing game genres
 	 * for a given game name.
 	 * @param gameName
+	 * @param onlyFromCache - whether or not to skip fetching the genres from internet if they are missing
 	 * @return
 	 */
-	public static List<String> getGenresByGameName(String gameName) {
+	public static List<String> getGenresByGameName(String gameName, Boolean onlyFromCache) {
 		if (cachedGenres.containsKey(gameName) && cachedGenres.get(gameName) != null) {
 //			LOG.info("Loading game genres from cache for game " + gameName);
 			return cachedGenres.get(gameName);
 		}
 		//fetching from datastore
 		Entity genre = DatastoreDao.getEntity("genre", gameName);
-		if (genre != null) {
-			List<String> genres = (List<String>) genre.getProperty("genres");
-	//		if (genres == null || genres.contains("unknown")) {
-	//			LOG.info("Genres empty or null, refetching");
-	//			genres = getGenresFromInternet(gameName);
-	//			persistEntity(gameName, key, genres);
-	//		}
-			saveInCache(gameName, genres);
+		if (genre != null && (List<String>) genre.getProperty("genres") != null) {
+			saveInCache(gameName, (List<String>) genre.getProperty("genres"));
 		} else {
-			LOG.info("Genre not found in the datastore: " + gameName);
-			List<String> genres = getGenresFromInternet(gameName);
-			saveInCache(gameName, genres);
-			genre = DatastoreDao.createEntity("genre", gameName);
-			genre.setProperty("genres", genres);
-			DatastoreDao.persistEntity(genre);
+			LOG.info("Genres not found in the datastore: " + gameName);
+			if (!onlyFromCache) {
+				List<String> genres = getGenresFromInternet(gameName);
+				saveInCache(gameName, genres);
+				genre = DatastoreDao.createEntity("genre", gameName);
+				genre.setProperty("genres", genres);
+				DatastoreDao.persistEntity(genre);
+			} else {
+				LOG.info("Genres not found in the datastore, will not look them up online " + gameName);
+			}
 		}
 		return cachedGenres.get(gameName);
 	}
@@ -70,7 +69,7 @@ public final class TheGamesDbDao {
 		String xml = HttpUtil.getGetResponse(buildUrl(gameName));
 		GameDetails gameDetails = (GameDetails) XmlUtil.extractElements(xml, new ExtractGameDetailsStrategy());
 		if (gameDetails != null) {
-			gameDetails.setGenres(getGenresByGameName(gameName));
+			gameDetails.setGenres(getGenresByGameName(gameName, true));
 		}
 		return gameDetails;
 	}

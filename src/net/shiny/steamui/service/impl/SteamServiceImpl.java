@@ -1,7 +1,6 @@
 package net.shiny.steamui.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
@@ -81,22 +80,38 @@ public class SteamServiceImpl implements SteamService {
 	}
 
 	@Override
+	public List<String> getGenresForGameName(String gameName) {
+		List<String> genres = TheGamesDbDao.getGenresByGameName(gameName, false); 
+		if (LocalCoopDao.supportsLocalCoop(gameName)) {				
+			if (genres != null && !genres.contains(LOCAL_CO_OP)) {
+				genres.add(LOCAL_CO_OP);
+			}
+		}
+		return genres;
+	}
+	
+	@Override
 	public GameDetails getGameDetails(String gameName) {
 		return TheGamesDbDao.getGameDetails(gameName);
 	}
 	
 	/**
-	 * Adds the genres to the game
+	 * Adds the meta-data (genres) to the game
 	 * @param game
 	 */
 	private void enrich(Game game) {
-		List<String> genres = TheGamesDbDao.getGenresByGameName(game.getName());
+		List<String> genres = TheGamesDbDao.getGenresByGameName(game.getName(), true);
+		if (genres == null || genres.isEmpty()) {
+			game.setEnrichUrl("/genres?name="+game.getName());	
+		} else {
+			game.setEnrichUrl(null);
+		}
 		if (LocalCoopDao.supportsLocalCoop(game.getName())) {				
 			if (genres != null && !genres.contains(LOCAL_CO_OP)) {
 				genres.add(LOCAL_CO_OP);
 			}
 		}
-		game.setGenres(genres != null ? genres : Arrays.asList("unknown"));
+		game.setGenres(genres);
 		game.updateSearchField();
 	}
 

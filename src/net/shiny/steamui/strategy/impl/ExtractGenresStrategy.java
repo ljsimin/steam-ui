@@ -1,7 +1,6 @@
 package net.shiny.steamui.strategy.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import net.shiny.steamui.strategy.GameStrategy;
@@ -44,7 +43,8 @@ public final class ExtractGenresStrategy extends GameStrategy{
 			}
 			
         }
-		return Arrays.asList("unknown");
+//		return new ArrayList<String>();
+		return null;
 	}
 	
 	@Override

@@ -13,6 +13,7 @@ public final class Game implements Comparable<Game> {
 	private String imgIconUrl;
 	private List<String> genres;
 	private String searchField;
+	private String enrichUrl;
 	
 	public String getAppid() {
 		return appid;
@@ -41,6 +42,13 @@ public final class Game implements Comparable<Game> {
 	
 	public void updateSearchField() {		
 		this.searchField = new StringBuilder().append(name + " ").append(genres != null ? genres.toString() : "").toString(); 
+	}
+	
+	public String getEnrichUrl() {
+		return enrichUrl;
+	}
+	public void setEnrichUrl(String enrichUrl) {
+		this.enrichUrl = enrichUrl;
 	}
 	@Override
 	public int compareTo(Game o) {

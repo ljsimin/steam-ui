@@ -188,13 +188,28 @@ steamui.render = function(game) {
     $('<ul>')
     	.addClass("game-genres")
 		.addClass("game-genres-"+game.appid)
-		.appendTo('#li-'+game.appid);
-    $.each(game.genres, function(j, genre) {
-    	$('<li>')
-			.text(genre)
-			.addClass("game-genre")
-			.appendTo(".game-genres-"+game.appid);
-	});
+		.appendTo('#li-'+game.appid);    
+    if (game.genres != null) {
+	    $.each(game.genres, function(j, genre) {
+	    	$('<li>')
+				.text(genre)
+				.addClass("game-genre")
+				.appendTo(".game-genres-"+game.appid);
+		});
+    } 
+    if (game.enrichUrl != null) {
+		$.getJSON('/genres?name=' + game.name, {}).done(
+				function(data) {
+					if (data != null) {
+	    				$.each(data, function(j, genre) {
+	    			    	$('<li>')
+	    						.text(genre)
+	    						.addClass("game-genre")
+	    						.appendTo(".game-genres-"+game.appid);
+	    				});
+					}
+				});
+    }
 }
 
 steamui.addItemsToList = function(data) {
