@@ -37,6 +37,8 @@
 	
 	<script type="text/javascript">	
 		$(document).ready(function() {
+			//clear the filter
+			$('#filter-input').val('');
 			steamui.getGames();
 			steamui.registerSearchHandler();
 		});
