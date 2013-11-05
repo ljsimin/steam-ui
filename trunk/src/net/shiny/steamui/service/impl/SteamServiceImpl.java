@@ -59,12 +59,6 @@ public class SteamServiceImpl implements SteamService {
 	 */
 	@Override
 	public List<Game> getGames(String steamId, Integer offset) {
-		try {
-			Thread.sleep(0);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		List<Game> games = SteamDao.getAllGamesBySteamId(steamId);
 		Collections.sort(games);
 		List<Game> result = new ArrayList<Game>();
