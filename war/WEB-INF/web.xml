@@ -15,6 +15,11 @@
 		<servlet-name>PlayerDetailEndpoint</servlet-name>
 		<servlet-class>net.shiny.steamui.endpoint.PlayerDetailEndpoint</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>WarmupServlet</servlet-name>
+		<servlet-class>net.shiny.steamui.servlet.WarmupServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>SteamUiEndpoint</servlet-name>
 		<url-pattern>/steamui</url-pattern>
