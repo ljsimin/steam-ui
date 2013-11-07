@@ -203,13 +203,14 @@ steamui.filter = _.throttle(function(s) {
 			return true;
 		}
 		var matches = false;
-		//searching genres
-		$.each(game.genres, function(i, genre){
-			if (~genre.toLowerCase().indexOf(searchString)) {
-				console.log(genre + " contains " + searchString)	
-				matches = true;
-			}
-		});
+		if (game.genres != null) {
+			//searching genres
+			$.each(game.genres, function(i, genre){
+				if (~genre.toLowerCase().indexOf(searchString)) {
+					matches = true;
+				}
+			});
+		}
 		return matches;
 	});	
 	if (result.length < steamui.gameList.length) {
@@ -222,8 +223,8 @@ steamui.filter = _.throttle(function(s) {
 	}
 }, 1000);
 
-steamui.render = function(game) {
-	$("<li/>")
+steamui.render = function(game) {	
+	var gameElement = $("<li/>")
 		.attr("data-appid", game.appid)
 		.attr("data-game-name", game.name)
 		.attr("id", "li-" + game.appid)

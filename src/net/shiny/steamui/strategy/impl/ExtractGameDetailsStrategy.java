@@ -49,12 +49,14 @@ public class ExtractGameDetailsStrategy extends GameStrategy {
 							break;
 						}
 						case "Images" : {
-							String image;
+							String image = null;
 							Node imageCandidate = subElement.getFirstChild();
-							if (imageCandidate.getNodeName().equals("boxart")) {
-								image = imageCandidate.getTextContent();
-							} else {
-								image = imageCandidate.getFirstChild().getFirstChild().getTextContent();
+							if (imageCandidate != null) {
+								if (imageCandidate.getNodeName().equals("boxart")) {
+									image = imageCandidate.getTextContent();
+								} else {
+									image = imageCandidate.getFirstChild().getFirstChild().getTextContent();
+								}
 							}
 							details.setImageUrl("http://thegamesdb.net/banners/"+image);
 							break;
