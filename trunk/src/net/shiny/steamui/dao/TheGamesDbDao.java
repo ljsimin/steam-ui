@@ -2,6 +2,7 @@ package net.shiny.steamui.dao;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,32 +32,33 @@ public final class TheGamesDbDao {
 	/**
 	 * Returns the list of strings representing game genres
 	 * for a given game name.
-	 * @param gameName
+	 * @param gameNameLocal
 	 * @param onlyFromCache - whether or not to skip fetching the genres from internet if they are missing
 	 * @return
 	 */
 	public static List<String> getGenresByGameName(String gameName, Boolean onlyFromCache) {
-		if (cachedGenres.containsKey(gameName) && cachedGenres.get(gameName) != null) {
+		String gameNameLocal = gameName.trim();
+		if (cachedGenres.containsKey(gameNameLocal) && cachedGenres.get(gameNameLocal) != null) {
 //			LOG.info("Loading game genres from cache for game " + gameName);
-			return cachedGenres.get(gameName);
+			return cachedGenres.get(gameNameLocal);
 		}
 		//fetching from datastore
-		Entity genre = DatastoreDao.getEntity("genre", gameName);
+		Entity genre = DatastoreDao.getEntity("genre", gameNameLocal);
 		if (genre != null && (List<String>) genre.getProperty("genres") != null) {
-			saveInCache(gameName, (List<String>) genre.getProperty("genres"));
+			saveInCache(gameNameLocal, (List<String>) genre.getProperty("genres"));
 		} else {
-			LOG.info("Genres not found in the datastore: " + gameName);
+			LOG.info("Genres not found in the datastore: " + gameNameLocal);
 			if (!onlyFromCache) {
-				List<String> genres = getGenresFromInternet(gameName);
-				saveInCache(gameName, genres);
-				genre = DatastoreDao.createEntity("genre", gameName);
+				List<String> genres = getGenresFromInternet(gameNameLocal);
+				saveInCache(gameNameLocal, genres);
+				genre = DatastoreDao.createEntity("genre", gameNameLocal);
 				genre.setProperty("genres", genres);
 				DatastoreDao.persistEntity(genre);
 			} else {
-				LOG.info("Genres not found in the datastore, will not look them up online " + gameName);
+				LOG.info("Genres not found in the datastore, will not look them up online " + gameNameLocal);
 			}
 		}
-		return cachedGenres.get(gameName);
+		return cachedGenres.get(gameNameLocal);
 	}
 	
 	/**
@@ -79,6 +81,9 @@ public final class TheGamesDbDao {
 		String xml = HttpUtil.getGetResponse(buildUrl(gameName));
 		GameStrategy strategy =  new ExtractGenresStrategy();
 		List<String> genres = (List<String>) XmlUtil.extractElements(xml, strategy);
+		if (genres == null || genres.isEmpty()) {
+			genres = Arrays.asList("unknown");
+		}
 		return genres;
 	}
 

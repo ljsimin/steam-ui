@@ -12,6 +12,7 @@ import net.shiny.steamui.dao.TheGamesDbDao;
 import net.shiny.steamui.dto.Game;
 import net.shiny.steamui.dto.GameDetails;
 import net.shiny.steamui.service.SteamService;
+import net.shiny.steamui.util.HttpUtil;
 
 /**
  * Service for manipulating the list of Steam games
@@ -96,7 +97,7 @@ public class SteamServiceImpl implements SteamService {
 	private void enrich(Game game) {
 		List<String> genres = TheGamesDbDao.getGenresByGameName(game.getName(), true);
 		if (genres == null || genres.isEmpty()) {
-			game.setEnrichUrl("/genres?name="+game.getName());	
+			game.setEnrichUrl("/genres?name="+HttpUtil.encode(game.getName().trim()));	
 		} else {
 			game.setEnrichUrl(null);
 		}

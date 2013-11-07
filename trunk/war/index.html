@@ -22,14 +22,13 @@
   <body>
     <div class="header">
     	<img id="spinner" src="image/ajax-loader.gif"></img>
-    	<h1 ><span id="player-name"></span> Steam UI beta 5</h1>
+    	<h1 ><span id="player-name"></span> Steam UI beta 6</h1>
 	</div>
 	
 	<div class="left-column">
 		Search: 
 		<input name="filter-input" id="filter-input" type="text">
 		<ul id="game-list"></ul>
-		<div id="spinner-holder"></div>
 	</div>
 	<div class="right-column">
 		<div id="game-info-frame"></div>
@@ -39,6 +38,7 @@
 		$(document).ready(function() {
 			//clear the filter
 			$('#filter-input').val('');
+			steamui.getPlayerName();
 			steamui.getGames();
 			steamui.registerSearchHandler();
 		});

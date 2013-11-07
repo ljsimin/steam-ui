@@ -60,4 +60,9 @@ public final class Game implements Comparable<Game> {
 		}
 		return 0;
 	}
+	
+	@Override
+	public String toString() {
+		return this.getName();
+	}
 }

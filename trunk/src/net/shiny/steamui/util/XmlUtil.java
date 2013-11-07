@@ -25,8 +25,8 @@ public final class XmlUtil {
 	 * @return
 	 */
 	public static Object extractElements(String xml, GameStrategy strategy) {
-		System.out.println(xml);
-		System.out.println(xml.contains("Developer"));
+//		System.out.println(xml);
+//		System.out.println(xml.contains("Developer"));
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
         InputSource is;
