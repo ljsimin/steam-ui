@@ -33,11 +33,29 @@ h2 {
 	font-size: 12px;
 }
 
+::-webkit-scrollbar {
+    width: 12px;
+}
+ 
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    border-radius: 10px;
+}
+ 
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+
 #game-list {
 /* 	min-height: 100px; */
 /* 	vertical-align: middle; */
 	overflow-y: auto;
 	height: 100%;
+}
+
+a {
+	color: green;
 }
 
 ul.game-genres {
