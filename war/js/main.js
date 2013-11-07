@@ -196,9 +196,22 @@ steamui.renderDetailsViewErrorMessage = function(message, appid) {
 }
 
 steamui.filter = _.throttle(function(s) {
-	var result = _(steamui.gameList).filter(function (x) { 
-		return ~x.searchField.toLowerCase().indexOf(s.trim().toLowerCase()); 
-	});
+	var result = _(steamui.gameList).filter(function (game) {
+		var searchString = s.trim().toLowerCase();
+		//searching the game name
+		if (~game.name.toLowerCase().indexOf(searchString)) {
+			return true;
+		}
+		var matches = false;
+		//searching genres
+		$.each(game.genres, function(i, genre){
+			if (~genre.toLowerCase().indexOf(searchString)) {
+				console.log(genre + " contains " + searchString)	
+				matches = true;
+			}
+		});
+		return matches;
+	});	
 	if (result.length < steamui.gameList.length) {
 		$("#game-list").empty();
 		$.each(result, function(i, game ) {

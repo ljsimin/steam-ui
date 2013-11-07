@@ -107,7 +107,6 @@ public class SteamServiceImpl implements SteamService {
 			}
 		}
 		game.setGenres(genres);
-		game.updateSearchField();
 	}
 
 	@Override
