@@ -20,6 +20,9 @@ steamui.getGames = function() {
 						+ " items are in the list");
 			}
 		});
+}
+
+steamui.getPlayerName = function() {
 	var urlPlayer = "/player?id=" + $.url().param("id");
 	console.log(urlPlayer);
 	$.getJSON(urlPlayer, {}).done(function(data) {
@@ -34,12 +37,11 @@ steamui.registerClickHandlers = function() {
 		steamui.startSpinner();
 		var gameName = $(this).data('game-name');
 		var appid = $(this).data('appid');
-		console.log(gameName);
-		$.getJSON( '/game?name='+gameName, {
+		$.getJSON( '/game?name='+encodeURIComponent(gameName), {
 		  })
 		    .done(function(data) {
 		    	if (data == null) {
-		    		steamui.renderDetailsViewErrorMessage('Error');
+		    		steamui.renderDetailsViewErrorMessage('No information available', appid);
 		    		return;
 		    	}
 		    	steamui.renderDetailsView(data, appid);
@@ -134,31 +136,78 @@ steamui.renderDetailsView = function(data, appid) {
     	.addClass("detail-links-value")
     	.appendTo('#game-info-frame');
 	 $('<a>')
-    	.attr('href', "http://en.wikipedia.org/wiki/Special:Search/"+data.gameTitle)
+    	.attr('href', "http://en.wikipedia.org/wiki/Special:Search/"+encodeURIComponent(data.gameTitle))
     	.text("Wikipedia")
     	.addClass("detail-links-value")
     	.appendTo('#game-info-frame');
+	 $('<a>')
+ 		.attr('href', "http://thegamesdb.net/search/?string="+encodeURIComponent(data.gameTitle))
+ 		.text("TheGamesDB.net")
+ 		.addClass("detail-links-value")
+ 		.appendTo('#game-info-frame');
+	 $('<div>')
+		.appendTo('#game-info-frame');
+	 $('<span>')
+ 		.text("Powered by TheGamesDB.net ")
+ 		.addClass('tgdb-text')
+ 		.appendTo('#game-info-frame');	 
+	 $('<img/>')
+ 		.addClass('tgdb-logo')
+ 		.attr('src', 'http://wiki.thegamesdb.net/images/thumb/1/10/Icon-api.png/200px-Icon-api.png')
+ 		.appendTo('#game-info-frame');
 }
 
-steamui.renderDetailsViewErrorMessage = function(message) {
-	steamui.stopSpinner();
+steamui.renderDetailsViewErrorMessage = function(message, appid) {
 	$('#game-info-frame').empty();
-	$('<span>')
-		.text(message)
-		.appendTo('#game-info-frame');		
+	if (appid !== undefined && appid !== null) {
+		var gameName = $('#li-'+appid).data('game-name')
+		$('<h2>')
+			.text(gameName)
+			.appendTo('#game-info-frame');
+		$('<div>')
+    		.appendTo('#game-info-frame');
+		$('<span>')
+			.text(message)
+			.appendTo('#game-info-frame');		
+		$('<div>')
+			.appendTo('#game-info-frame');
+		 $('<span>')
+	    	.text("Links: ")
+	    	.addClass("detail-links-label")
+	    	.appendTo('#game-info-frame');
+		 $('<a>')
+	    	.attr('href', "http://store.steampowered.com/app/"+appid)
+	    	.text("Steam store")
+	    	.addClass("detail-links-value")
+	    	.appendTo('#game-info-frame');
+		 $('<a>')
+	    	.attr('href', "http://en.wikipedia.org/wiki/Special:Search/"+gameName)
+	    	.text("Wikipedia")
+	    	.addClass("detail-links-value")
+	    	.appendTo('#game-info-frame');
+		 $('<div>')
+ 			.appendTo('#game-info-frame');
+	} else {
+		$('<span>')
+			.text(message)
+			.appendTo('#game-info-frame');		
+	}
+	steamui.stopSpinner();
 }
 
 steamui.filter = _.throttle(function(s) {
 	var result = _(steamui.gameList).filter(function (x) { 
 		return ~x.searchField.toLowerCase().indexOf(s.trim().toLowerCase()); 
 	});
-	$("#game-list").empty();
-	$.each(result, function(i, game ) {
-    	//rendering the game in the visual list
-        steamui.render(game);
-        steamui.registerClickHandlers();
-    });
-}, 500);
+	if (result.length < steamui.gameList.length) {
+		$("#game-list").empty();
+		$.each(result, function(i, game ) {
+	    	//rendering the game in the visual list
+	        steamui.render(game);
+	        steamui.registerClickHandlers();
+	    });
+	}
+}, 1000);
 
 steamui.render = function(game) {
 	$("<li/>")
@@ -198,7 +247,7 @@ steamui.render = function(game) {
 		});
     } 
     if (game.enrichUrl != null) {
-		$.getJSON('/genres?name=' + game.name, {}).done(
+		$.getJSON(game.enrichUrl, {}).done(
 				function(data) {
 					if (data != null) {
 	    				$.each(data, function(j, genre) {

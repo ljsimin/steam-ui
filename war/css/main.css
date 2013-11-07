@@ -122,3 +122,13 @@ ul li, li * {
 	height: 128px;
 	float: left;
 }
+
+.tgdb-logo {
+/* 	float: right; */
+	height: 50px;
+	vertical-align: middle;
+}
+
+.tgdb-text {
+/* 	float: right; */
+}

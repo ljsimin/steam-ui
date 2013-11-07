@@ -2,8 +2,10 @@ package net.shiny.steamui.util;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 
 public final class HttpUtil {
 	/**
@@ -32,4 +34,16 @@ public final class HttpUtil {
 	      }
 	      return result;
 	   }
+	
+	/**
+	 * Encodes the given string so it can be safely used as a part of URL.
+	 * Assumes UTF-8 encoding. 
+	 */
+	public static String encode(String s) {
+		try {
+			return URLEncoder.encode(s, "UTF-8");
+		} catch (UnsupportedEncodingException e) {			
+		}
+		return s;
+	}
 }

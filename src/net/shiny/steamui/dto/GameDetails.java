@@ -13,6 +13,7 @@ public class GameDetails {
 	String developer;
 	String rating;
 	String imageUrl;
+	String imageUrl2;
 	
 	public String getGameTitle() {
 		return gameTitle;
@@ -73,6 +74,12 @@ public class GameDetails {
 	}
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+	public String getImageUrl2() {
+		return imageUrl2;
+	}
+	public void setImageUrl2(String imageUrl2) {
+		this.imageUrl2 = imageUrl2;
 	}
 	
 	
