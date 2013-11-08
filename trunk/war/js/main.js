@@ -195,25 +195,28 @@ steamui.renderDetailsViewErrorMessage = function(message, appid) {
 	steamui.stopSpinner();
 }
 
-steamui.filter = _.throttle(function(s) {
+steamui.filter = _.debounce(function(s) {
 	var result = _(steamui.gameList).filter(function (game) {
-		var searchString = s.trim().toLowerCase();
-		//searching the game name
-		if (~game.name.toLowerCase().indexOf(searchString)) {
-			return true;
+		if (s != null) {
+			var searchString = s.trim().toLowerCase();
+			//searching the game name
+			if (~game.name.toLowerCase().indexOf(searchString)) {
+				return true;
+			}
+			var matches = false;
+			if (game.genres != null) {
+				//searching genres
+				$.each(game.genres, function(i, genre){
+					if (~genre.toLowerCase().indexOf(searchString)) {
+						matches = true;
+					}
+				});
+			}
+			return matches;
 		}
-		var matches = false;
-		if (game.genres != null) {
-			//searching genres
-			$.each(game.genres, function(i, genre){
-				if (~genre.toLowerCase().indexOf(searchString)) {
-					matches = true;
-				}
-			});
-		}
-		return matches;
-	});	
-	if (result.length < steamui.gameList.length) {
+	});
+	
+	if (result.length != $('.game').length) {
 		$("#game-list").empty();
 		$.each(result, function(i, game ) {
 	    	//rendering the game in the visual list
@@ -221,7 +224,7 @@ steamui.filter = _.throttle(function(s) {
 	        steamui.registerClickHandlers();
 	    });
 	}
-}, 1000);
+}, 500);
 
 steamui.render = function(game) {	
 	var gameElement = $("<li/>")
