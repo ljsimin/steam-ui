@@ -149,7 +149,11 @@ ul li, li * {
 }
 
 #filter-input {
-	width: 88%;
+	width: 50%;
+	border-radius: 10px;
+	padding: 3px;
+	border: solid 1px #E5E5E5;
+	
 }
 
 .left-column {

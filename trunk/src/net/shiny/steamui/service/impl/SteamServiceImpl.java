@@ -107,6 +107,8 @@ public class SteamServiceImpl implements SteamService {
 	 */
 	private void enrich(Game game, String steamId) {
 		List<String> genres = TheGamesDbDao.getGenresByGameName(game.getName(), true);
+//		List<String> genres = new ArrayList<String>();
+//		genres.add("krompir");
 		if (genres == null || genres.isEmpty()) {
 			game.setEnrichUrl("/genres?name="+HttpUtil.encode(game.getName().trim()));	
 		} else {
