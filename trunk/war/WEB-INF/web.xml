@@ -16,6 +16,10 @@
 		<servlet-class>net.shiny.steamui.endpoint.PlayerDetailEndpoint</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>TagEndpoint</servlet-name>
+		<servlet-class>net.shiny.steamui.endpoint.TagEndpoint</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>WarmupServlet</servlet-name>
 		<servlet-class>net.shiny.steamui.servlet.WarmupServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
@@ -35,6 +39,10 @@
 	<servlet-mapping>
 		<servlet-name>PlayerDetailEndpoint</servlet-name>
 		<url-pattern>/player</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>TagEndpoint</servlet-name>
+		<url-pattern>/tags</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import net.shiny.steamui.config.ConfigurationHolder;
 import net.shiny.steamui.dao.LocalCoopDao;
 import net.shiny.steamui.dao.SteamDao;
+import net.shiny.steamui.dao.TagDao;
 import net.shiny.steamui.dao.TheGamesDbDao;
 import net.shiny.steamui.dto.Game;
 import net.shiny.steamui.dto.GameDetails;
@@ -49,7 +50,7 @@ public class SteamServiceImpl implements SteamService {
 		List<Game> result = new ArrayList<Game>();
 		for (int i = 0; i< games.size(); i++) {
 			Game game = games.get(i);
-			enrich(game);
+			enrich(game, steamId);
 			result.add(game);
 		}
 		return result;		
@@ -68,7 +69,7 @@ public class SteamServiceImpl implements SteamService {
 			if (--counter < 0) 
 				break;
 			Game game = games.get(i);
-			enrich(game);
+			enrich(game, steamId);
 			result.add(game);
 		}
 		return result;
@@ -86,15 +87,25 @@ public class SteamServiceImpl implements SteamService {
 	}
 	
 	@Override
+	public List<String> getTagsForGameName(String playerId, String gameName) {
+		return TagDao.getTagsForGame(playerId, gameName);
+	}
+	
+	@Override
+	public List<String> addTagToGame(String playerId, String gameName, String tag) {
+		return TagDao.addTagToGame(playerId, gameName, tag);
+	}
+	
+	@Override
 	public GameDetails getGameDetails(String gameName) {
 		return TheGamesDbDao.getGameDetails(gameName);
 	}
 	
 	/**
-	 * Adds the meta-data (genres) to the game
+	 * Adds the meta-data (genres and tags) to the game
 	 * @param game
 	 */
-	private void enrich(Game game) {
+	private void enrich(Game game, String steamId) {
 		List<String> genres = TheGamesDbDao.getGenresByGameName(game.getName(), true);
 		if (genres == null || genres.isEmpty()) {
 			game.setEnrichUrl("/genres?name="+HttpUtil.encode(game.getName().trim()));	
@@ -107,6 +118,10 @@ public class SteamServiceImpl implements SteamService {
 			}
 		}
 		game.setGenres(genres);
+		List<String> tags = TagDao.getTagsForGame(steamId, game.getName());
+		if (tags != null) {
+			game.setTags(tags);
+		}
 	}
 
 	@Override
