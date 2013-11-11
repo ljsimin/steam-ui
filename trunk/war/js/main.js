@@ -257,15 +257,11 @@ steamui.filter = _.debounce(function(s) {
 		}
 	});
 	
-	if (result.length != $('.game').length) {
-		$("#game-list").empty();
-		$.each(result, function(i, game ) {
-	    	//rendering the game in the visual list
-	        steamui.render(game);
-	        steamui.registerClickHandlers();
-	    });
-	}
-}, 500);
+	$(".game").hide();
+	$.each(result, function(i, game ) {
+		$('#li-'+game.appid).show();
+	});
+}, 400);
 
 steamui.render = function(game) {	
 	var gameElement = $("<li/>")
