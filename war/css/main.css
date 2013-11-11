@@ -21,6 +21,10 @@ h2 {
 	font-size: 10px;
 }
 
+.game:nth-child(even) {
+	background: #404040;
+}
+
 .game.clicked {
 	background-color: rgb(27,27,27);
 }
