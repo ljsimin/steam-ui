@@ -5,7 +5,8 @@ steamui.spinnerCounter = 0;
 
 steamui.getGames = function() {
 	steamui.startSpinner();
-	var urlGames = "/steamui?id=" + $.url().param("id") + "&offset="+ $('.game').length;
+	steamui.steamId = $.url().param("id");
+	var urlGames = "/steamui?id=" + steamui.steamId + "&offset="+ $('.game').length;
 	console.log(urlGames);
 	$.getJSON(urlGames, {}).done(
 		function(data) {
@@ -27,6 +28,7 @@ steamui.getPlayerName = function() {
 	console.log(urlPlayer);
 	$.getJSON(urlPlayer, {}).done(function(data) {
 		$('#player-name').text(data + " - ");
+		document.title = data + "'s Improved Steam Game Library"
 	});
 }
 
@@ -52,6 +54,34 @@ steamui.registerClickHandlers = function() {
 				steamui.renderDetailsViewErrorMessage('Error');			
 			});
 	  });
+	$(".game").hover(
+		function() {
+			$('#game-button-add-tag-'+$(this).data('appid')).show();
+		}, function() {
+			$('#game-button-add-tag-'+$(this).data('appid')).hide();
+		}
+	);
+	$('.game-button-add-tag').unbind().click(function () { 
+		var newTag = window.prompt("Enter a new tag for this game","Favorite");
+		if (newTag != null) {
+			var appid = $(this).data('appid');
+			var gameName = $('.game-name-'+appid).text();
+			var steamId = steamui.steamId;
+			var tag = newTag;
+			$.getJSON('/tags?gameName='+gameName+'&steamId='+steamId+'&tag='+tag+'&action=ADD', {}).done(
+					function(data) {
+						if (data != null) {
+							$('.game-tags-'+appid).empty();
+							$.each(data, function(j, tag) {
+						    	$('<li>')
+									.text(tag)
+									.addClass("game-tag")
+									.appendTo(".game-tags-"+appid);
+							});
+						}
+					});
+		}
+	});
 }
 
 steamui.registerSearchHandler = function() {
@@ -212,6 +242,17 @@ steamui.filter = _.debounce(function(s) {
 					}
 				});
 			}
+			if (matches === true) {
+				return true;
+			}
+			if (game.tags != null) {
+				//searching tags
+				$.each(game.tags, function(i, tag){
+					if (~tag.toLowerCase().indexOf(searchString)) {
+						matches = true;
+					}
+				});
+			}
 			return matches;
 		}
 	});
@@ -233,28 +274,41 @@ steamui.render = function(game) {
 		.attr("id", "li-" + game.appid)
 		.addClass("game")
 		.appendTo("#game-list");
-	$('<a>')
-		.attr('href', "steam://run/"+game.appid)
-		.attr("id", "run-" + game.appid)
+//	$('<a>')
+//		.attr('href', "steam://run/"+game.appid)
+//		.attr("id", "run-" + game.appid)
+//		.appendTo('#li-'+game.appid);
+//    $('<img/>')
+//    	.addClass('run-game')
+//    	.attr("data-appid", game.appid)
+//    	.attr('src', "/image/play-icon.png")
+//    	.appendTo('#run-'+game.appid);
+	$('<span>')
+		.addClass("game-thumbnail-container")
+		.attr('id', 'game-thumbnail-container-'+game.appid)
 		.appendTo('#li-'+game.appid);
-    $('<img/>')
-    	.addClass('run-game')
-    	.attr("data-appid", game.appid)
-    	.attr('src', "/image/play-icon.png")
-    	.appendTo('#run-'+game.appid);
     $('<img/>')
     	.addClass('game-thumbnail')
     	.attr('src', "http://media.steampowered.com/steamcommunity/public/images/apps/"+game.appid+"/"+game.img_icon_url+".jpg")
-    	.appendTo('#li-'+game.appid);
+    	.appendTo('#game-thumbnail-container-'+game.appid);
+    $('<span>')
+		.addClass("game-container")
+		.attr('id', 'game-container-'+game.appid)
+		.attr("data-appid", game.appid)
+		.appendTo('#li-'+game.appid);
     $('<span>')
     	.text(game.name)
     	.addClass("game-name")
+    	.addClass("game-name-"+game.appid)
     	.attr("data-appid", game.appid)
-    	.appendTo('#li-'+game.appid);
+    	.appendTo('#game-container-'+game.appid);
+    $('<div>')
+		.addClass("game-break")
+		.appendTo('#game-container-'+game.appid);
     $('<ul>')
     	.addClass("game-genres")
-		.addClass("game-genres-"+game.appid)
-		.appendTo('#li-'+game.appid);    
+    	.addClass("game-genres-"+game.appid)
+    	.appendTo('#game-container-'+game.appid);    
     if (game.genres != null) {
 	    $.each(game.genres, function(j, genre) {
 	    	$('<li>')
@@ -263,6 +317,24 @@ steamui.render = function(game) {
 				.appendTo(".game-genres-"+game.appid);
 		});
     } 
+    $('<ul>')
+    	.addClass("game-tags")
+    	.addClass("game-tags-"+game.appid)
+    	.appendTo('#li-'+game.appid);    
+    if (game.tags != null) {
+	    $.each(game.tags, function(j, tag) {
+	    	$('<li>')
+				.text(tag)
+				.addClass("game-tag")
+				.appendTo(".game-tags-"+game.appid);
+		});
+    } 
+    $('<span>')
+		.text("Add a tag")
+		.addClass("game-button-add-tag")
+		.attr('id', 'game-button-add-tag-'+game.appid)
+		.attr("data-appid", game.appid)
+		.appendTo('#li-'+game.appid);
     if (game.enrichUrl != null) {
 		$.getJSON(game.enrichUrl, {}).done(
 				function(data) {

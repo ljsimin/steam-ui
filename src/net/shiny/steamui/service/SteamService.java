@@ -16,5 +16,9 @@ public interface SteamService {
 	
 	public String getPlayerName(String steamId);
 
-	List<String> getGenresForGameName(String gameName);
+	public List<String> getGenresForGameName(String gameName);
+
+	public List<String> getTagsForGameName(String playerId, String gameName);
+
+	public List<String> addTagToGame(String playerId, String gameName, String tag);
 }

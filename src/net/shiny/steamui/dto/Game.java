@@ -12,6 +12,7 @@ public final class Game implements Comparable<Game> {
 	@SerializedName("img_icon_url") 
 	private String imgIconUrl;
 	private List<String> genres;
+	private List<String> tags;
 	private String enrichUrl;
 	
 	public String getAppid() {
@@ -33,6 +34,12 @@ public final class Game implements Comparable<Game> {
 		this.genres = genres;
 	}
 	
+	public List<String> getTags() {
+		return tags;
+	}
+	public void setTags(List<String> tags) {
+		this.tags = tags;
+	}
 	public String getEnrichUrl() {
 		return enrichUrl;
 	}
