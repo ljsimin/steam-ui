@@ -21,7 +21,7 @@ public class TagDao {
 		if (playerTags != null) {
 			return playerTags.get(gameName);
 		}
-		LOG.warning(String.format("No tags for a given steamId %s and game %s", playerSteamId, gameName));
+		LOG.info(String.format("No tags for a given steamId %s and game %s", playerSteamId, gameName));
 		return null;
 	}
 	

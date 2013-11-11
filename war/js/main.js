@@ -65,9 +65,9 @@ steamui.registerClickHandlers = function() {
 		var newTag = window.prompt("Enter a new tag for this game","Favorite");
 		if (newTag != null) {
 			var appid = $(this).data('appid');
-			var gameName = $('.game-name-'+appid).text();
+			var gameName = encodeURIComponent($('.game-name-'+appid).text());
 			var steamId = steamui.steamId;
-			var tag = newTag;
+			var tag = encodeURIComponent(newTag);
 			$.getJSON('/tags?gameName='+gameName+'&steamId='+steamId+'&tag='+tag+'&action=ADD', {}).done(
 					function(data) {
 						if (data != null) {

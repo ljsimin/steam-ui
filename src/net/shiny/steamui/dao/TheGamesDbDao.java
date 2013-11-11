@@ -38,9 +38,10 @@ public final class TheGamesDbDao {
 	 */
 	public static List<String> getGenresByGameName(String gameName, Boolean onlyFromCache) {
 		String gameNameLocal = gameName.trim();
-		if (cachedGenres.containsKey(gameNameLocal) && cachedGenres.get(gameNameLocal) != null) {
+		List<String> genresFromCache = cachedGenres.get(gameNameLocal);
+		if (genresFromCache != null) {
 //			LOG.info("Loading game genres from cache for game " + gameName);
-			return cachedGenres.get(gameNameLocal);
+			return genresFromCache;
 		}
 		//fetching from datastore
 		Entity genre = DatastoreDao.getEntity("genre", gameNameLocal);
