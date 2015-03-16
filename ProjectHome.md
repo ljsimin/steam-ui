@@ -1,0 +1,1 @@
+Frontend for Steam game library with some useful additional game info like genres and custom metadata
